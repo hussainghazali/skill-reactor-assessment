@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+      // Other options...
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "target": "ES6", // or "ESNext"
+      "module": "commonjs", // Use "commonjs" here
+      "types": [
+        // Other types...
+        "jest" // Include Jest types
+      ],
+      "typeRoots": [
+        "./node_modules/@types" // Specify the type declaration directory
+      ]
+    },
+    "exclude": [
+      // Other exclusions...
+      "node_modules/@types/mocha" // Exclude Mocha types
+    ]
+}

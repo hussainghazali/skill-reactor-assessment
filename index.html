@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Display Images</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        #image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .image {
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Skill Reactor Assignment</h1>
+    <!-- Create a container to display the images -->
+    <div id="image-container"></div>
+
+    <!-- Add a button to trigger the display of all images -->
+    <div class="button-container">
+        <button id="display-button">Display All Images</button>
+    </div>
+
+    <!-- Add a button to clear the displayed images -->
+    <div class="button-container">
+        <button id="clear-button">Clear</button>
+    </div>
+
+    <script>
+        // Function to display an image from image data
+        function displayImage(imageData) {
+            // Check if imageData.data exists and is an array
+            if (!Array.isArray(imageData.imageData.data)) {
+                console.error('Invalid image data:', imageData);
+                return;
+            }
+
+            // Create an image element
+            const image = new Image();
+
+            // Convert the binary image data to a base64 data URL
+            const base64Data = btoa(String.fromCharCode(...imageData.imageData.data));
+            const dataURL = `data:${imageData.type};base64,${base64Data}`;
+
+            image.src = dataURL;
+            image.alt = imageData.imageId;
+
+            // Append the image to the container
+            const imageContainer = document.getElementById('image-container');
+            imageContainer.appendChild(image);
+        }
+
+        // Function to fetch and display images
+        function fetchAndDisplayImages() {
+            // Disable the "Display All Images" button
+            const displayButton = document.getElementById('display-button');
+            displayButton.disabled = true;
+
+            // Make an HTTP request to retrieve image data
+            fetch('http://localhost:3006/api/images/retrieve-all')
+                .then(response => response.json())
+                .then(data => {
+                    // Access the array of image objects from the response
+                    const images = data.images;
+
+                    // Display each image
+                    images.forEach(imageData => {
+                        displayImage(imageData);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Function to clear displayed images and enable the display button
+        function clearImages() {
+            const imageContainer = document.getElementById('image-container');
+            imageContainer.innerHTML = ''; // Clear the container
+
+            // Enable the "Display All Images" button
+            const displayButton = document.getElementById('display-button');
+            displayButton.disabled = false;
+        }
+
+        // Add a click event listener to the display button
+        const displayButton = document.getElementById('display-button');
+        displayButton.addEventListener('click', fetchAndDisplayImages);
+
+        // Add a click event listener to the clear button
+        const clearButton = document.getElementById('clear-button');
+        clearButton.addEventListener('click', clearImages);
+    </script>
+</body>
+</html>
